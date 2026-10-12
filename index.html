@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oceans čeki</title>
+<meta name="description" content="Nofotografē čeku, un tas nonāk pie Oceans grāmatveža.">
+<meta name="theme-color" content="#ffffff">
+<meta name="robots" content="noindex">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Oceans čeki">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap">
+<style>
+:root{
+  --navy:#1A2559; --green:#64C19A; --green-20:#e0f3eb;
+  --bg:#ffffff; --surface:#f6f8fa; --fg:#1A2559; --muted:#5e6589; --line:#d1d3de;
+  --accent:#0A5D35; --accent-ink:#ffffff; --ring:#0A5D35; --fill:#e0f3eb; --shutter-ink:#0A5D35; --ok:#0A5D35; --ok-soft:#e0f3eb;
+  --danger:#B03963; --danger-soft:#fbe9ee; --paper:#fffdf8;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111839; --surface:#1A2559; --fg:#eef1fa; --muted:#a4a9c6; --line:#2c3970;
+  --accent:#64C19A; --accent-ink:#111839; --ring:#64C19A; --fill:#1d3a3a; --shutter-ink:#e0f3eb; --ok:#64C19A; --ok-soft:#1d3a3a;
+  --danger:#f08aa9; --danger-soft:#3a1d2a; --green-20:#1d3a3a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111839; --surface:#1A2559; --fg:#eef1fa; --muted:#a4a9c6; --line:#2c3970;
+  --accent:#64C19A; --accent-ink:#111839; --ring:#64C19A; --fill:#1d3a3a; --shutter-ink:#e0f3eb; --ok:#64C19A; --ok-soft:#1d3a3a;
+  --danger:#f08aa9; --danger-soft:#3a1d2a; --green-20:#1d3a3a; color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit}
+.app{max-width:460px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 16px env(safe-area-inset-bottom,0px)}
+
+/* ---- top 60% ---- */
+.top{flex:0 0 60%;display:flex;flex-direction:column;min-height:0}
+header{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:3px solid var(--fg);
+  border-image:linear-gradient(90deg,var(--fg) 0 45%,transparent 45%) 1}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:26px;line-height:1}
+.brand svg{width:26px;height:25px;fill:var(--ring)}
+.brand small{font-weight:400;font-size:20px;color:var(--muted)}
+.who{margin-top:14px;text-align:center;line-height:1.2}
+.who .co{font-family:var(--display);font-weight:700;font-size:24px;text-wrap:balance}
+.who .pe{color:var(--muted);font-size:15px;margin-top:2px}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:16px;min-height:0}
+.shutter-wrap{position:relative;height:min(100%,240px);max-width:72vw;aspect-ratio:848/807;transition:transform .12s ease}
+.shutter-wrap:active{transform:scale(.96)}
+.shutter-wrap > svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.shutter-wrap > svg .ring{fill:var(--ring)}
+.shutter-wrap > svg .disc{fill:var(--fill)}
+.shutter{position:absolute;inset:0;border-radius:50%;border:0;cursor:pointer;background:transparent;color:var(--shutter-ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 4.4% 0 0}
+.shutter svg{width:52px;height:52px}
+.shutter b{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:.02em;max-width:70%;line-height:1.05;text-align:center}
+:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+
+/* ---- bottom 40%: history ---- */
+.hist{flex:1 1 40%;min-height:0;display:flex;flex-direction:column;border-top:1px solid var(--line);padding-top:10px}
+.hist h2{font-family:var(--display);font-size:15px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600;margin:0 0 6px}
+.list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;margin:0 -16px;padding:0 16px 16px}
+.row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);
+  padding:11px 2px;cursor:pointer;min-height:56px}
+.row:active{background:var(--surface)}
+.row .ic{flex:0 0 34px;height:42px;border-radius:0 8px 0 8px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;position:relative}
+.row .ic svg{width:18px;height:18px;color:var(--ok)}
+.row .pg{position:absolute;right:-6px;bottom:-6px;background:var(--fg);color:var(--bg);font-size:10px;font-weight:700;border-radius:999px;padding:1px 5px}
+.row .tx{flex:1;min-width:0}
+.row .dt{font-weight:600;font-variant-numeric:tabular-nums}
+.row .nt{color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .chev{color:var(--muted);flex:0 0 auto}
+.row.new{animation:pop .6s ease}
+@keyframes pop{0%{background:var(--ok-soft)}100%{background:transparent}}
+.empty,.loading{color:var(--muted);font-size:14px;padding:14px 2px}
+.more{display:block;width:100%;margin-top:10px;padding:12px;border:1px solid var(--line);background:var(--surface);border-radius:0 14px 0 14px;
+  font-family:var(--display);font-size:18px;font-weight:600;cursor:pointer}
+
+/* ---- full-screen layers ---- */
+.layer{position:fixed;inset:0;background:var(--bg);z-index:10;display:flex;flex-direction:column}
+.layer .in{max-width:460px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;gap:14px;min-height:0;
+  padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.layer h1{font-family:var(--display);font-weight:600;font-size:26px;margin:0}
+.pages{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;overflow-y:auto;min-height:0}
+.page{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:var(--paper);border:1px solid var(--line)}
+.page img{width:100%;height:100%;object-fit:cover;display:block}
+.page .n{position:absolute;left:6px;top:6px;background:var(--fg);color:var(--bg);font-size:12px;font-weight:600;border-radius:999px;padding:1px 7px}
+.page .x{position:absolute;right:4px;top:4px;width:30px;height:30px;border-radius:50%;border:0;background:color-mix(in srgb,var(--fg) 70%,transparent);color:var(--bg);font-size:17px;cursor:pointer}
+.addpage{aspect-ratio:3/4;border-radius:10px;border:2px dashed var(--ring);background:var(--green-20);font-weight:600;font-size:14px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center}
+.addpage span{font-size:30px;line-height:1}
+label.note{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+label.note small{font-size:12px}
+textarea{font:inherit;font-size:16px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;resize:none}
+.actions{display:flex;gap:10px;margin-top:auto}
+.btn{flex:1;border:0;border-radius:0 18px 0 18px;padding:16px;font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:.02em;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);flex:2}
+.btn.ghost{background:var(--surface);border:1px solid var(--line)}
+.btn.danger{background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger)}
+.btn[disabled]{opacity:.7;cursor:progress}
+.spin{display:inline-block;width:18px;height:18px;border:3px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-3px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.err{background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger);border-radius:10px;padding:10px 12px;font-weight:600;font-size:14px}
+
+/* saved */
+.saved{position:fixed;inset:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);display:grid;place-items:center}
+.saved .box{display:flex;flex-direction:column;align-items:center;gap:12px;animation:in .25s ease}
+.saved .ck{width:110px;height:110px;border-radius:50%;background:var(--accent);display:grid;place-items:center}
+.saved .ck svg{width:60px;height:60px;color:var(--accent-ink)}
+.saved b{font-family:var(--display);font-size:30px;color:var(--ok)}
+@keyframes in{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* viewer */
+.vhead{display:flex;align-items:center;gap:10px}
+.vhead h1{flex:1;font-size:22px;font-variant-numeric:tabular-nums}
+.close{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:22px;cursor:pointer}
+.vnote{color:var(--muted);font-size:14px;margin:-6px 0 0}
+.vbody{flex:1;overflow:auto;min-height:0;background:var(--surface);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.vbody canvas{width:100%;height:auto;background:#fff;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.vdel small{display:block;color:var(--muted);font-size:12px;text-align:center;margin-top:6px}
+
+.bad{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+.bad h1{font-family:var(--display);font-size:26px;margin:0}
+.bad p{color:var(--muted);max-width:32ch;line-height:1.5;margin:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* add to home screen */
+.a2hs-btn{margin-left:auto;display:flex;align-items:center;gap:6px;border:1px solid var(--ring);background:var(--green-20);color:var(--fg);
+  border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.a2hs-btn svg{width:16px;height:16px;flex:0 0 auto}
+.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px;counter-reset:st;overflow-y:auto;min-height:0}
+.steps li{display:flex;gap:12px;align-items:flex-start;line-height:1.45;counter-increment:st}
+.steps li::before{content:counter(st);flex:0 0 30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);
+  display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:18px}
+.steps .ico{display:inline-grid;place-items:center;width:26px;height:26px;border:1px solid var(--line);border-radius:6px;background:var(--surface);vertical-align:-7px;margin:0 2px}
+.steps .ico svg{width:16px;height:16px}
+.tip{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--muted);line-height:1.45;margin:0}
+.a2hs-intro{color:var(--muted);margin:-4px 0 0;line-height:1.45}
+.bootmsg{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;color:var(--muted)}
+.bad .btn{flex:0 0 auto;padding:12px 24px;margin-top:6px}
+.app:has(#hist[hidden]) .top{flex:1}
+/* mazi telefoni */
+@media (max-height:640px){ .who{margin-top:8px} .who .co{font-size:21px} .shutter svg{width:42px;height:42px} .shutter b{font-size:18px} }
+/* telefons guļus: poga pa kreisi, saraksts pa labi */
+@media (orientation:landscape) and (max-height:540px){
+  .app{max-width:900px;flex-direction:row;gap:20px}
+  .top{flex:1 1 55%} .hist{flex:1 1 45%;border-top:0;border-left:1px solid var(--line);padding:0 0 0 16px}
+  .list{margin:0;padding:0 0 12px}
+  .shutter-wrap{height:min(100%,200px)}
+}
+/* planšetes un datori: centrā, nedaudz lielāk */
+@media (min-width:700px) and (min-height:700px){
+  .app{max-width:520px;padding-top:28px}
+  .shutter-wrap{height:min(100%,300px)}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><path id="oc" d="M835.6,348.16c-8.66-8.38-20.54-12.65-32.54-11.67-15.14,1.22-27.78,10.23-34.09,22.94-2.25-49.01-14.89-101.27-34.68-143.38C672.37,80.4,524.16-8.18,373.87.6,211.46,10.62,77.32,111.13,23.81,262.91c-55.35,156.96-12.58,324.87,111.64,438.21,79.24,69.74,175.05,105.76,273.38,105.75,55.01,0,110.82-11.27,164.96-34.23,75.73-32.1,141.39-84.36,189.86-151.12,51.18-70.47,80.42-154.05,84.55-241.72.56-11.83-4.03-23.37-12.6-31.65ZM764.67,377.3c-2.07,137.01-82.43,272.11-195.46,328.53-107.16,54.93-234.28,52.5-340.03-6.49-105.68-58.95-174.48-165.77-184.04-285.74-9.78-119.94,41.02-236.4,135.89-311.52C245.97,50.67,325.02,23.77,405.17,23.77c37.02,0,74.28,5.74,110.49,17.45,134.45,41.9,239.21,175.91,249.11,318.65,0,0,.57,7.08.48,11.09,1.28-2.41,3.63-11.32,3.63-11.32-2.61,5.34-4.11,11.33-4.2,17.67Z"/></defs></svg>
+
+<div class="app">
+  <section class="top">
+    <header>
+      <div class="brand"><svg viewBox="0 0 848.24 806.88" aria-hidden="true"><use href="#oc"/></svg>Oceans <small data-t="brandSub"></small></div>
+      <button class="a2hs-btn" id="a2hsBtn" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><span data-t="a2hsBtn"></span></button>
+    </header>
+
+    <div id="main" hidden style="flex:1;display:flex;flex-direction:column;min-height:0">
+      <div class="who"><div class="co" id="coName"></div><div class="pe" id="peName"></div></div>
+      <div class="stage">
+        <div class="shutter-wrap">
+          <svg viewBox="0 0 848.24 806.88" aria-hidden="true"><path class="disc" d="M764.67,377.3c-2.07,137.01-82.43,272.11-195.46,328.53-107.16,54.93-234.28,52.5-340.03-6.49-105.68-58.95-174.48-165.77-184.04-285.74-9.78-119.94,41.02-236.4,135.89-311.52C245.97,50.67,325.02,23.77,405.17,23.77c37.02,0,74.28,5.74,110.49,17.45,134.45,41.9,239.21,175.91,249.11,318.65,0,0,.57,7.08.48,11.09,1.28-2.41,3.63-11.32,3.63-11.32-2.61,5.34-4.11,11.33-4.2,17.67Z"/><use class="ring" href="#oc"/></svg>
+          <button class="shutter" id="shoot" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>
+            <b data-t="shoot"></b>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="boot" class="bootmsg"><span class="spin" aria-hidden="true"></span><span data-t="loading"></span></div>
+
+    <section class="bad" id="bad" hidden>
+      <h1 data-t="badTitle"></h1>
+      <p id="badText" data-t="badText"></p>
+      <button class="btn ghost" id="retry" type="button" hidden data-t="retry"></button>
+    </section>
+  </section>
+
+  <section class="hist" id="hist" hidden>
+    <h2 data-t="histTitle"></h2>
+    <div class="list" id="list">
+      <div id="rows"></div>
+      <p class="loading" id="listMsg" data-t="loading"></p>
+      <button class="more" id="more" type="button" hidden data-t="more"></button>
+    </div>
+  </section>
+</div>
+
+<section class="layer" id="compose" hidden>
+  <div class="in">
+    <h1 id="composeTitle"></h1>
+    <div class="pages" id="pages"></div>
+    <label class="note" for="note"><span data-t="noteLabel"></span>
+      <textarea id="note" rows="2" maxlength="300"></textarea>
+      <small data-t="noteHint"></small>
+    </label>
+    <p class="err" id="sendErr" hidden></p>
+    <div class="actions">
+      <button class="btn ghost" id="cancel" type="button" data-t="cancel"></button>
+      <button class="btn primary" id="done" type="button"></button>
+    </div>
+  </div>
+</section>
+
+<section class="layer" id="viewer" hidden>
+  <div class="in">
+    <div class="vhead"><h1 id="vTitle"></h1><button class="close" id="vClose" type="button" aria-label="×">×</button></div>
+    <p class="vnote" id="vNote" hidden></p>
+    <div class="vbody" id="vBody"></div>
+    <div class="vdel" id="vDelWrap" hidden>
+      <button class="btn danger" id="vDel" type="button" style="width:100%" data-t="delete"></button>
+      <small id="vDelHint"></small>
+    </div>
+  </div>
+</section>
+
+<section class="layer" id="a2hs" hidden>
+  <div class="in">
+    <div class="vhead"><h1 data-t="a2hsTitle"></h1><button class="close" id="a2hsClose" type="button" aria-label="×">×</button></div>
+    <p class="a2hs-intro" data-t="a2hsIntro"></p>
+    <ol class="steps" id="a2hsSteps"></ol>
+    <p class="tip" id="a2hsTip"></p>
+    <div class="actions">
+      <button class="btn primary" id="a2hsDone" type="button" style="width:100%" data-t="a2hsDone"></button>
+    </div>
+  </div>
+</section>
+
+<div class="saved" id="saved" hidden role="status" aria-live="polite">
+  <div class="box">
+    <div class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div>
+    <b data-t="saved"></b>
+  </div>
+</div>
+
+<input type="file" id="cam" accept="image/*" capture="environment" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+/* Oceans čeki – lietotne. Aizmugure: Google Apps Script (doPost JSON API). */
+const API_URL = 'https://script.google.com/macros/s/AKfycbzJWzAgGenmNZcCHTP_0tyiZntWOLXwWd0YsK-YLfdUZnxdKomX-cqycK-eXn8eYGCn/exec';
+
+/* ---------- Valoda: latviski, ja ierīce latviešu valodā, citādi angliski ---------- */
+const LANG = ((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase().startsWith('lv') ? 'lv' : 'en';
+const T = {
+  lv: {
+    brandSub:'čeki', badTitle:'Saite nav derīga', badText:'Lūdzu, atver savu personīgo saiti no Oceans vēstules vai WhatsApp ziņas. Ja tās nav, prasi to savam grāmatvedim.',
+    netTitle:'Nav savienojuma', netText:'Neizdevās sazināties ar serveri. Pārbaudi internetu un mēģini vēlreiz.', retry:'Mēģināt vēlreiz',
+    shoot:'Fotografēt čeku', histTitle:'Mani čeki', loading:'Ielādē…', more:'Ielādēt vēl 10',
+    empty:'Šeit parādīsies tavi nosūtītie čeki.', listErr:'Neizdevās ielādēt sarakstu. Pārbaudi internetu.',
+    photographed:'Čeks nofotografēts', longReceipt:n=>'Garais čeks: '+n+' lapas', addPage:'Vēl viena lapa',
+    remove:n=>'Noņemt lapu '+n, noteLabel:'Piezīme (nav obligāti)', noteHint:'Piezīme tiks uzrakstīta uz čeka, piem. "Komandējums uz Franciju".',
+    notePh:'piem. degviela, klienta pusdienas', cancel:'Atcelt', done:'Gatavs ✓', sending:'Sūta…', saved:'Saglabāts',
+    notSent:'Nav nosūtīts, mēģini vēlreiz. Pārbaudi interneta savienojumu.', photoErr:'Neizdevās atvērt bildi. Mēģini vēlreiz.',
+    pages:'lp.', today:'Šodien', yesterday:'Vakar', noNote:'bez piezīmes',
+    openErr:'Neizdevās atvērt čeku.', delete:'Dzēst šo čeku', confirmDel:'Vai tiešām dzēst šo čeku?',
+    delHint:m=>'Dzēst var vēl '+m+' min. Vēlāk čeks paliek pie grāmatveža.', delTooLate:'Dzēst vairs nevar: pagājusi vairāk nekā 1 stunda.',
+    delErr:'Neizdevās izdzēst. Mēģini vēlreiz.', invalid:'Saite vairs nav derīga. Lūdz grāmatvedim jaunu saiti.',
+    a2hsBtn:'Pievienot ekrānam', a2hsTitle:'Pievieno sākuma ekrānam', a2hsIntro:'Tad čeku lietotne būs kā ikona telefonā, un saite vairs nebūs jāmeklē.',
+    a2hsDone:'Gatavs, pievienots ✓',
+    iosSteps:['Apakšā spied pogu <b>Kopīgot</b> <span class="ico">SHARE</span>.','Ritini uz leju un izvēlies <b>Pievienot sākuma ekrānam</b>.','Augšā labajā stūrī spied <b>Pievienot</b>.'],
+    iosTip:'Ja atvēri saiti no WhatsApp vai e-pasta, vispirms spied kompasa ikonu <span class="ico">COMPASS</span>, lai lapa atvērtos Safari. Tikai Safari ļauj pievienot sākuma ekrānam.',
+    samSteps:['Apakšā labajā stūrī spied <b>⋮</b> vai <b>≡</b> (izvēlne).','Izvēlies <b>Pievienot lapu</b> → <b>Sākuma ekrāns</b>.','Spied <b>Pievienot</b>.'],
+    samTip:'Ja izvēlnē neredzi "Pievienot lapu", pavelc izvēlni uz augšu, lai redzētu visas iespējas.',
+    andSteps:['Augšā labajā stūrī spied <b>⋮</b> (trīs punkti).','Izvēlies <b>Instalēt lietotni</b> vai <b>Pievienot sākuma ekrānam</b>.','Spied <b>Instalēt</b> / <b>Pievienot</b>.'],
+    andTip:'Ja atvēri saiti no WhatsApp, vispirms spied ⋮ un izvēlies <b>Atvērt pārlūkā</b>.'
+  },
+  en: {
+    brandSub:'receipts', badTitle:'This link is not valid', badText:'Please open your personal link from the Oceans e-mail or WhatsApp message. If you do not have it, ask your accountant.',
+    netTitle:'No connection', netText:'Could not reach the server. Check your internet connection and try again.', retry:'Try again',
+    shoot:'Take a photo of a receipt', histTitle:'My receipts', loading:'Loading…', more:'Load 10 more',
+    empty:'Your sent receipts will appear here.', listErr:'Could not load the list. Check your internet connection.',
+    photographed:'Receipt captured', longReceipt:n=>'Long receipt: '+n+' pages', addPage:'Add another page',
+    remove:n=>'Remove page '+n, noteLabel:'Note (optional)', noteHint:'The note will be printed on the receipt, e.g. "Business trip to France".',
+    notePh:'e.g. fuel, client lunch', cancel:'Cancel', done:'Done ✓', sending:'Sending…', saved:'Saved',
+    notSent:'Not sent, please try again. Check your internet connection.', photoErr:'Could not open the photo. Please try again.',
+    pages:'p.', today:'Today', yesterday:'Yesterday', noNote:'no note',
+    openErr:'Could not open the receipt.', delete:'Delete this receipt', confirmDel:'Are you sure you want to delete this receipt?',
+    delHint:m=>'You can delete it for '+m+' more min. After that it stays with your accountant.', delTooLate:'It can no longer be deleted: more than 1 hour has passed.',
+    delErr:'Could not delete. Please try again.', invalid:'This link is no longer valid. Ask your accountant for a new one.',
+    a2hsBtn:'Add to home screen', a2hsTitle:'Add to your home screen', a2hsIntro:'The receipts app will then be an icon on your phone, so you will not need to look for the link.',
+    a2hsDone:'Done, added ✓',
+    iosSteps:['Tap the <b>Share</b> button <span class="ico">SHARE</span>.','Scroll down and choose <b>Add to Home Screen</b>.','Tap <b>Add</b> in the top right corner.'],
+    iosTip:'If you opened the link from WhatsApp or e-mail, first tap the compass icon <span class="ico">COMPASS</span> to open the page in Safari. Only Safari can add it to the home screen.',
+    samSteps:['Tap <b>⋮</b> or <b>≡</b> (menu) in the bottom right corner.','Choose <b>Add page to</b> → <b>Home screen</b>.','Tap <b>Add</b>.'],
+    samTip:'If you do not see "Add page to", swipe the menu up to see all options.',
+    andSteps:['Tap <b>⋮</b> (three dots) in the top right corner.','Choose <b>Install app</b> or <b>Add to Home screen</b>.','Tap <b>Install</b> / <b>Add</b>.'],
+    andTip:'If you opened the link from WhatsApp, first tap ⋮ and choose <b>Open in browser</b>.'
+  }
+}[LANG];
+document.documentElement.lang = LANG;
+document.querySelectorAll('[data-t]').forEach(el=>{ const v=T[el.dataset.t]; if(typeof v==='string') el.textContent=v; });
+document.title = LANG==='lv' ? 'Oceans čeki' : 'Oceans receipts';
+
+const $ = id => document.getElementById(id);
+const store = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
+
+/* ---------- Ierīce ---------- */
+const UA = navigator.userAgent || '';
+const IS_IOS = /iphone|ipad|ipod/i.test(UA) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const IS_ANDROID = /android/i.test(UA);
+const IS_SAMSUNG = /SamsungBrowser/i.test(UA);
+let STANDALONE = false;
+try{ STANDALONE = matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || navigator.standalone===true; }catch(e){}
+
+// Manifests tikai ne-iPhone: iPhone sākuma ekrāna ikona tad saglabā pilnu saiti ar kodu.
+if(!IS_IOS){ const l=document.createElement('link'); l.rel='manifest'; l.href='manifest.webmanifest'; document.head.appendChild(l); }
+if('serviceWorker' in navigator && location.protocol==='https:'){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+
+/* ---------- Personīgais kods: no saites (?k=) vai atcerēts ---------- */
+const urlCode = (new URLSearchParams(location.search).get('k') || '').trim();
+const CODE = urlCode || store.get('oceans-code') || '';
+if(urlCode) store.set('oceans-code', urlCode);
+
+/* ---------- API ---------- */
+async function api(action, payload){
+  const body = JSON.stringify(Object.assign({ action, k: CODE }, payload||{}));
+  let res;
+  try{ res = await fetch(API_URL, { method:'POST', body, redirect:'follow' }); }
+  catch(e){ throw new Error('NETWORK'); }
+  let j; try{ j = await res.json(); }catch(e){ throw new Error('NETWORK'); }
+  if(!j || !j.ok) throw new Error((j && j.error) || 'ERROR');
+  return j.data;
+}
+const errCode = e => String((e&&e.message)||e||'');
+
+/* ---------- Datumi ---------- */
+const pad = n => String(n).padStart(2,'0');
+function fmtWhen(ms){
+  const d=new Date(ms), now=new Date();
+  const day = x => new Date(x.getFullYear(),x.getMonth(),x.getDate()).getTime();
+  const diff = Math.round((day(now)-day(d))/864e5);
+  const time = pad(d.getHours())+':'+pad(d.getMinutes());
+  if(diff===0) return T.today+', '+time;
+  if(diff===1) return T.yesterday+', '+time;
+  return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+', '+time;
+}
+
+/* ---------- Starts ---------- */
+function showBad(title, text, canRetry){
+  $('boot').hidden=true; $('main').hidden=true; $('hist').hidden=true;
+  $('bad').querySelector('h1').textContent=title; $('badText').textContent=text;
+  $('retry').hidden=!canRetry; $('bad').hidden=false;
+}
+async function boot(){
+  if(!CODE){ showBad(T.badTitle, T.badText, false); return; }
+  $('bad').hidden=true; $('boot').hidden=false;
+  try{
+    const who = await api('info');
+    $('coName').textContent = who.company; $('peName').textContent = who.person;
+    $('boot').hidden=true; $('main').hidden=false; $('hist').hidden=false;
+    initA2hs();
+    loadPage(true);
+  }catch(e){
+    if(errCode(e).includes('INVALID_LINK')) showBad(T.badTitle, T.invalid, false);
+    else showBad(T.netTitle, T.netText, true);
+  }
+}
+$('retry').onclick = boot;
+
+/* ---------- Vēsture ---------- */
+const rowsEl=$('rows'), listMsg=$('listMsg'), moreBtn=$('more');
+let items=[], offset=0;
+const tickSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>';
+function rowEl(r, fresh){
+  const b=document.createElement('button'); b.type='button'; b.className='row'+(fresh?' new':'');
+  b.innerHTML='<span class="ic">'+tickSvg+(r.pages>1?'<span class="pg"></span>':'')+'</span><span class="tx"><span class="dt"></span><span class="nt"></span></span><span class="chev">›</span>';
+  if(r.pages>1) b.querySelector('.pg').textContent=r.pages+' '+T.pages;
+  b.querySelector('.dt').textContent=fmtWhen(r.created);
+  b.querySelector('.nt').textContent=r.note||T.noNote;
+  b.onclick=()=>openReceipt(r);
+  return b;
+}
+function renderList(freshId){
+  rowsEl.innerHTML='';
+  items.forEach(r=>rowsEl.appendChild(rowEl(r, r.id===freshId)));
+  if(!items.length){ listMsg.hidden=false; listMsg.textContent=T.empty; } else listMsg.hidden=true;
+}
+async function loadPage(reset){
+  if(reset){ offset=0; items=[]; }
+  moreBtn.disabled=true;
+  if(!items.length){ listMsg.hidden=false; listMsg.textContent=T.loading; }
+  try{
+    const res=await api('list',{offset});
+    const known=new Set(items.map(i=>i.id));
+    res.items.forEach(i=>{ if(!known.has(i.id)) items.push(i); });
+    offset+=res.items.length;
+    moreBtn.hidden=!res.more;
+    renderList();
+  }catch(e){
+    listMsg.hidden=false; listMsg.textContent = errCode(e).includes('INVALID_LINK') ? T.invalid : T.listErr;
+  }finally{ moreBtn.disabled=false; }
+}
+moreBtn.onclick=()=>loadPage(false);
+
+/* ---------- Fotografēšana ---------- */
+const cam=$('cam'), note=$('note');
+note.placeholder=T.notePh; $('done').textContent=T.done;
+let pages=[];
+function renderPages(){
+  const el=$('pages'); el.innerHTML='';
+  pages.forEach((src,i)=>{
+    const d=document.createElement('div'); d.className='page';
+    d.innerHTML='<img alt=""><span class="n">'+(i+1)+'</span><button class="x" type="button">×</button>';
+    d.querySelector('img').src=src;
+    const x=d.querySelector('.x'); x.setAttribute('aria-label',T.remove(i+1));
+    x.onclick=()=>{ pages.splice(i,1); pages.length?renderPages():closeCompose(); };
+    el.appendChild(d);
+  });
+  const add=document.createElement('button'); add.className='addpage'; add.type='button';
+  add.innerHTML='<span>+</span>'; add.appendChild(document.createTextNode(T.addPage));
+  add.onclick=()=>cam.click();
+  el.appendChild(add);
+  $('composeTitle').textContent = pages.length>1 ? T.longReceipt(pages.length) : T.photographed;
+}
+function shrink(file,max){
+  return new Promise((res,rej)=>{
+    const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{ const s=Math.min(1,max/Math.max(img.width,img.height));
+      const c=document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',.82)); };
+    img.onerror=rej; img.src=url;
+  });
+}
+$('shoot').onclick=()=>cam.click();
+cam.onchange=async()=>{
+  const f=cam.files&&cam.files[0]; cam.value=''; if(!f) return;
+  try{ pages.push(await shrink(f,1600)); renderPages(); $('sendErr').hidden=true; $('compose').hidden=false; }
+  catch(e){ alert(T.photoErr); }
+};
+function closeCompose(){ pages=[]; note.value=''; $('sendErr').hidden=true; $('compose').hidden=true; }
+$('cancel').onclick=closeCompose;
+
+/* ---------- PDF ar uzdrukātu piezīmi ---------- */
+function loadImg(src){ return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src;}); }
+function wrap(ctx,text,maxW){
+  const words=text.split(/\s+/), lines=[]; let line='';
+  words.forEach(w=>{ const t=line?line+' '+w:w; if(ctx.measureText(t).width>maxW && line){ lines.push(line); line=w; } else line=t; });
+  if(line) lines.push(line); return lines;
+}
+function stamp(im,text){
+  const W=im.naturalWidth, Hh=im.naturalHeight;
+  if(!text) return {src:null,w:W,h:Hh};
+  const fs=Math.max(22,Math.round(W*0.036)), p=Math.round(fs*0.7);
+  const c=document.createElement('canvas'), ctx=c.getContext('2d');
+  ctx.font='600 '+fs+'px "Open Sans", Arial, sans-serif';
+  const lines=wrap(ctx,text,W-p*2).slice(0,4);
+  const strip=p*2+lines.length*fs*1.3;
+  c.width=W; c.height=Math.round(Hh+strip);
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,strip);
+  ctx.fillStyle='#0A5D35'; ctx.fillRect(0,strip-Math.max(3,fs*0.12),W,Math.max(3,fs*0.12));
+  ctx.fillStyle='#1A2559'; ctx.font='600 '+fs+'px "Open Sans", Arial, sans-serif'; ctx.textBaseline='top';
+  lines.forEach((l,i)=>ctx.fillText(l,p,p+i*fs*1.3));
+  ctx.drawImage(im,0,strip,W,Hh);
+  return {src:c.toDataURL('image/jpeg',.85),w:c.width,h:c.height};
+}
+async function buildPdf(text){
+  const { jsPDF } = window.jspdf; let doc=null;
+  for(let i=0;i<pages.length;i++){
+    const im=await loadImg(pages[i]); const st=stamp(im,text);
+    const src=st.src||pages[i], w=st.w*0.5, h=st.h*0.5, o=w>h?'l':'p';
+    if(!doc) doc=new jsPDF({orientation:o,unit:'pt',format:[w,h],compress:true}); else doc.addPage([w,h],o);
+    doc.addImage(src,'JPEG',0,0,w,h);
+  }
+  return doc.output('datauristring').split(',')[1];
+}
+let busy=false;
+$('done').onclick=async()=>{
+  if(!pages.length||busy) return;
+  busy=true; const btn=$('done'); btn.disabled=true; $('cancel').disabled=true; $('sendErr').hidden=true;
+  btn.innerHTML='<span class="spin" aria-hidden="true"></span>'; btn.appendChild(document.createTextNode(T.sending));
+  try{
+    if(document.fonts&&document.fonts.ready) await document.fonts.ready;
+    const text=note.value.replace(/\s+/g,' ').trim();
+    const pdf=await buildPdf(text);
+    const r=await api('upload',{pdf, note:text, pages:pages.length});
+    closeCompose();
+    items=items.filter(i=>i.id!==r.id); items.unshift(r); offset++;
+    renderList(r.id); $('list').scrollTop=0;
+    const s=$('saved'); s.hidden=false; setTimeout(()=>{ s.hidden=true; },1500);
+  }catch(e){
+    const m=$('sendErr'); m.textContent = errCode(e).includes('INVALID_LINK') ? T.invalid : T.notSent; m.hidden=false;
+  }finally{
+    busy=false; btn.disabled=false; $('cancel').disabled=false; btn.textContent=T.done;
+  }
+};
+
+/* ---------- Skatītājs ---------- */
+let current=null, delTimer=null;
+function setupPdfJs(){
+  if(window._pdfReady) return;
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  window._pdfReady=true;
+}
+function updateDel(){
+  if(!current) return;
+  const left=current.deleteUntil-Date.now();
+  if(left<=0){ $('vDelWrap').hidden=true; clearInterval(delTimer); return; }
+  $('vDelWrap').hidden=false; $('vDelHint').textContent=T.delHint(Math.max(1,Math.ceil(left/60000)));
+}
+async function openReceipt(r){
+  current=r;
+  $('vTitle').textContent=fmtWhen(r.created);
+  $('vNote').textContent=r.note; $('vNote').hidden=!r.note;
+  const body=$('vBody'); body.innerHTML='<p class="loading">'+T.loading+'</p>';
+  updateDel(); clearInterval(delTimer); delTimer=setInterval(updateDel,20000);
+  $('viewer').hidden=false;
+  try{
+    setupPdfJs();
+    const b64=await api('get',{id:r.id});
+    if(current!==r) return;
+    const bin=atob(b64), bytes=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+    const pdf=await pdfjsLib.getDocument({data:bytes}).promise;
+    body.innerHTML='';
+    const target=Math.min(1400, body.clientWidth*(window.devicePixelRatio||1));
+    for(let p=1;p<=pdf.numPages;p++){
+      const page=await pdf.getPage(p); const v1=page.getViewport({scale:1});
+      const vp=page.getViewport({scale:target/v1.width});
+      const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; body.appendChild(c);
+      await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+    }
+  }catch(e){ if(current===r){ body.innerHTML='<p class="err"></p>'; body.firstChild.textContent=T.openErr; } }
+}
+function closeViewer(){ current=null; clearInterval(delTimer); $('viewer').hidden=true; $('vBody').innerHTML=''; }
+$('vClose').onclick=closeViewer;
+$('vDel').onclick=async()=>{
+  if(!current) return;
+  if(Date.now()>current.deleteUntil){ alert(T.delTooLate); updateDel(); return; }
+  if(!confirm(T.confirmDel)) return;
+  const r=current, btn=$('vDel'); btn.disabled=true;
+  try{
+    await api('delete',{id:r.id});
+    items=items.filter(i=>i.id!==r.id); offset=Math.max(0,offset-1); renderList(); closeViewer();
+  }catch(e){ alert(errCode(e).includes('TOO_LATE') ? T.delTooLate : T.delErr); }
+  finally{ btn.disabled=false; }
+};
+
+/* ---------- Pievienot sākuma ekrānam ---------- */
+let installEvt=null;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); installEvt=e; });
+window.addEventListener('appinstalled', ()=>{ store.set('oceans-a2hs-done','1'); $('a2hsBtn').hidden=true; });
+function initA2hs(){
+  const btn=$('a2hsBtn');
+  if(!(IS_IOS||IS_ANDROID) || STANDALONE || store.get('oceans-a2hs-done')==='1') return;
+  btn.hidden=false;
+  const SHARE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 11v9h14v-9"/></svg>';
+  const COMPASS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>';
+  const fill=t=>t.replace('SHARE',SHARE).replace('COMPASS',COMPASS);
+  btn.onclick=async()=>{
+    // Android: ja pārlūks atļauj, uzreiz parāda īsto "Instalēt" logu
+    if(installEvt){
+      installEvt.prompt();
+      try{ const c=await installEvt.userChoice; if(c&&c.outcome==='accepted'){ store.set('oceans-a2hs-done','1'); btn.hidden=true; } }catch(e){}
+      installEvt=null; return;
+    }
+    const steps=IS_IOS?T.iosSteps:(IS_SAMSUNG?T.samSteps:T.andSteps);
+    $('a2hsSteps').innerHTML=steps.map(x=>'<li><span>'+fill(x)+'</span></li>').join('');
+    $('a2hsTip').innerHTML=fill(IS_IOS?T.iosTip:(IS_SAMSUNG?T.samTip:T.andTip));
+    $('a2hs').hidden=false;
+  };
+  $('a2hsClose').onclick=()=>{ $('a2hs').hidden=true; };
+  $('a2hsDone').onclick=()=>{ store.set('oceans-a2hs-done','1'); btn.hidden=true; $('a2hs').hidden=true; };
+}
+
+boot();
+
+</script>
+</body>
+</html>
