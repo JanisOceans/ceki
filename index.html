@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Oceans čeki</title>
+<title>Čeki</title>
 <meta name="description" content="Nofotografē čeku, un tas nonāk pie Oceans grāmatveža.">
 <meta name="theme-color" content="#ffffff">
 <meta name="robots" content="noindex">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Oceans čeki">
+<meta name="apple-mobile-web-app-title" content="Čeki">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=2">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap">
 <style>
@@ -309,7 +309,8 @@ const T = {
 }[LANG];
 document.documentElement.lang = LANG;
 document.querySelectorAll('[data-t]').forEach(el=>{ const v=T[el.dataset.t]; if(typeof v==='string') el.textContent=v; });
-document.title = LANG==='lv' ? 'Oceans čeki' : 'Oceans receipts';
+document.title = LANG==='lv' ? 'Čeki' : 'Receipts';
+{ const at=document.querySelector('meta[name="apple-mobile-web-app-title"]'); if(at) at.content=document.title; }
 
 const $ = id => document.getElementById(id);
 const store = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
