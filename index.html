@@ -279,8 +279,8 @@ const T = {
     a2hsDone:'Gatavs, pievienots ✓',
     iosSteps:['Apakšā spied pogu <b>Kopīgot</b> <span class="ico">SHARE</span>.','Ritini uz leju un izvēlies <b>Pievienot sākuma ekrānam</b>.','Augšā labajā stūrī spied <b>Pievienot</b>.'],
     iosTip:'Ja atvēri saiti no WhatsApp vai e-pasta, vispirms spied kompasa ikonu <span class="ico">COMPASS</span>, lai lapa atvērtos Safari. Tikai Safari ļauj pievienot sākuma ekrānam.',
-    samSteps:['Apakšā labajā stūrī spied <b>⋮</b> vai <b>≡</b> (izvēlne).','Izvēlies <b>Pievienot lapu</b> → <b>Sākuma ekrāns</b>.','Spied <b>Pievienot</b>.'],
-    samTip:'Ja izvēlnē neredzi "Pievienot lapu", pavelc izvēlni uz augšu, lai redzētu visas iespējas.',
+    samSteps:['Apakšā labajā stūrī spied <b>≡</b> vai <b>⋮</b> (izvēlne).','Izvēlies <b>Pievienot lapu</b> → <b>Sākuma ekrāns</b>.','Spied <b>Pievienot</b>.'],
+    samTip:'Ja izvēlnē neredzi "Pievienot lapu", pavelc izvēlni uz augšu. Neizvēlies "Instalēt" – vajag tikai "Sākuma ekrāns".',
     andSteps:['Augšā labajā stūrī spied <b>⋮</b> (trīs punkti).','Izvēlies <b>Instalēt lietotni</b> vai <b>Pievienot sākuma ekrānam</b>.','Spied <b>Instalēt</b> / <b>Pievienot</b>.'],
     andTip:'Ja atvēri saiti no WhatsApp, vispirms spied ⋮ un izvēlies <b>Atvērt pārlūkā</b>.'
   },
@@ -302,7 +302,7 @@ const T = {
     iosSteps:['Tap the <b>Share</b> button <span class="ico">SHARE</span>.','Scroll down and choose <b>Add to Home Screen</b>.','Tap <b>Add</b> in the top right corner.'],
     iosTip:'If you opened the link from WhatsApp or e-mail, first tap the compass icon <span class="ico">COMPASS</span> to open the page in Safari. Only Safari can add it to the home screen.',
     samSteps:['Tap <b>⋮</b> or <b>≡</b> (menu) in the bottom right corner.','Choose <b>Add page to</b> → <b>Home screen</b>.','Tap <b>Add</b>.'],
-    samTip:'If you do not see "Add page to", swipe the menu up to see all options.',
+    samTip:'If you do not see "Add page to", swipe the menu up. Do not choose "Install" – only "Home screen".',
     andSteps:['Tap <b>⋮</b> (three dots) in the top right corner.','Choose <b>Install app</b> or <b>Add to Home screen</b>.','Tap <b>Install</b> / <b>Add</b>.'],
     andTip:'If you opened the link from WhatsApp, first tap ⋮ and choose <b>Open in browser</b>.'
   }
@@ -323,7 +323,8 @@ let STANDALONE = false;
 try{ STANDALONE = matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || navigator.standalone===true; }catch(e){}
 
 // Manifests tikai ne-iPhone: iPhone sākuma ekrāna ikona tad saglabā pilnu saiti ar kodu.
-if(!IS_IOS){ const l=document.createElement('link'); l.rel='manifest'; l.href='manifest.webmanifest'; document.head.appendChild(l); }
+// Samsung Internet: bez manifesta, lai tiek veidota parasta ikona (saīsne), nevis Samsung WebAPK, ko bloķē Play Protect.
+if(!IS_IOS && !IS_SAMSUNG){ const l=document.createElement('link'); l.rel='manifest'; l.href='manifest.webmanifest'; document.head.appendChild(l); }
 if('serviceWorker' in navigator && location.protocol==='https:'){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 
 /* ---------- Personīgais kods: no saites (?k=) vai atcerēts ---------- */
@@ -567,7 +568,7 @@ function initA2hs(){
   const fill=t=>t.replace('SHARE',SHARE).replace('COMPASS',COMPASS);
   btn.onclick=async()=>{
     // Android: ja pārlūks atļauj, uzreiz parāda īsto "Instalēt" logu
-    if(installEvt){
+    if(installEvt && !IS_SAMSUNG){
       installEvt.prompt();
       try{ const c=await installEvt.userChoice; if(c&&c.outcome==='accepted'){ store.set('oceans-a2hs-done','1'); btn.hidden=true; } }catch(e){}
       installEvt=null; return;
