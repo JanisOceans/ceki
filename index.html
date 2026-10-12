@@ -337,7 +337,14 @@ if(urlCode) store.set('oceans-code', urlCode);
 function shortCompany(n){
   let t=String(n||'').replace(/["'“”„«»]/g,'').replace(/\s+/g,' ').trim();
   t=t.replace(/^(SIA|AS|IK|ZS|PS|KS|BDR|Biedrība|Nodibinājums)\s+/i,'').replace(/\s+(SIA|AS|IK|Ltd\.?|OÜ|UAB)$/i,'').trim();
-  return t || String(n||'').trim();
+  t = t || String(n||'').trim();
+  // gariem nosaukumiem: veseli vārdi līdz 12 burtiem (sākuma ekrānā vairāk neietilpst)
+  if(t.length>12){
+    const w=t.split(' '); let out=w[0];
+    for(let i=1;i<w.length && (out+' '+w[i]).length<=12;i++) out+=' '+w[i];
+    t=out;
+  }
+  return t;
 }
 function setAppName(company){
   const name = shortCompany(company) || document.title;
@@ -393,7 +400,7 @@ async function boot(){
   try{
     const who = await api('info');
     $('coName').textContent = who.company; $('peName').textContent = who.person;
-    setAppName(who.company);
+    setAppName(who.short || who.company);
     $('boot').hidden=true; $('main').hidden=false; $('hist').hidden=false;
     initA2hs();
     loadPage(true);
